@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 
 
@@ -50,3 +51,21 @@ class Genome:
     def get_genome_dicts(dna, spec):
         genome_dicts = [Genome.get_gene_dict(dna[i], spec) for i in range(len(dna))]
         return genome_dicts
+
+    @staticmethod
+    def expand_links(parent_link, uniq_parent_name, flat_links, exp_links):
+        children = [child for child in flat_links if child.parent_name == parent_link.name]
+        for child in children:
+            for recur in range(int(child.recur)):
+                c_copy = copy.copy(child)
+                c_copy.parent_name = uniq_parent_name
+                uniq_name = c_copy.name + str(len(exp_links))
+                c_copy.name = uniq_name
+                exp_links.append(c_copy)
+                Genome.expand_links(child, uniq_name, flat_links, exp_links)
+
+class URDFLink:
+    def __init__(self, name, parent_name, recur):
+        self.name = name
+        self.parent_name = parent_name
+        self.recur = recur

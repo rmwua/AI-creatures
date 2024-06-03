@@ -60,5 +60,33 @@ class GenomeTest(unittest.TestCase):
         genome_dicts = genome.Genome.get_genome_dicts(dna, spec)
         self.assertEqual(len(genome_dicts), 3)
 
+    def test_flat_links(self):
+        links = [
+            genome.URDFLink(name="A", parent_name=None, recur=1),
+            genome.URDFLink(name="B", parent_name="A", recur=1),
+            genome.URDFLink(name="C", parent_name="B", recur=2),
+            genome.URDFLink(name="D", parent_name="C", recur=1),
+        ]
+        self.assertIsNotNone(links)
+
+    def test_expand_links_1(self):
+        links = [
+            genome.URDFLink(name="A", parent_name="None", recur=1),
+            genome.URDFLink(name="B", parent_name="A", recur=2),
+        ]
+        exp_links = [links[0]]
+        genome.Genome.expand_links(links[0], links[0].name, links, exp_links)
+        self.assertEqual(len(exp_links), 3)
+
+    def test_expand_links_2(self):
+        links = [
+            genome.URDFLink(name="A", parent_name="None", recur=1),
+            genome.URDFLink(name="B", parent_name="A", recur=1),
+            genome.URDFLink(name="C", parent_name="B", recur=2),
+            genome.URDFLink(name="D", parent_name="C", recur=1),
+        ]
+        exp_links = [links[0]]
+        genome.Genome.expand_links(links[0], links[0].name, links, exp_links)
+        self.assertEqual(len(exp_links), 6)
 
 unittest.main()
