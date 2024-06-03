@@ -40,10 +40,25 @@ class GenomeTest(unittest.TestCase):
     def testGeneSpecScale(self):
         spec = genome.Genome.get_gene_spec()
         gene = genome.Genome.get_random_gene(20)
-        print(spec)
-        print(gene)
-        print(gene[spec["link-length"]["ind"]])
         self.assertGreater(gene[spec["link-length"]["ind"]], 0)
+
+    def test_get_gene_dict_exists(self):
+        self.assertIsNotNone(genome.Genome.get_gene_dict)
+
+    def test_gene_to_gene_dict(self):
+        spec = genome.Genome.get_gene_spec()
+        gene = genome.Genome.get_random_gene(len(spec))
+        gene_dict = genome.Genome.get_gene_dict(gene, spec)
+        self.assertIn("link-recurrence", gene_dict)
+
+    def test_get_genome_dicts_exists(self):
+        self.assertIsNotNone(genome.Genome.get_genome_dicts)
+
+    def test_genome_to_dict(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)
+        self.assertEqual(len(genome_dicts), 3)
 
 
 unittest.main()

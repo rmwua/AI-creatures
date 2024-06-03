@@ -38,3 +38,15 @@ class Genome:
             gene_spec[key]["ind"] = ind
             ind = ind + 1
         return gene_spec
+
+    @staticmethod
+    def get_gene_dict(gene, spec):
+        gene_dict = {}
+        for key in spec:
+            gene_dict[key] = gene[spec[key]["ind"]]
+        return gene_dict
+
+    @staticmethod
+    def get_genome_dicts(dna, spec):
+        genome_dicts = [Genome.get_gene_dict(dna[i], spec) for i in range(len(dna))]
+        return genome_dicts
