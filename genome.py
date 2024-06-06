@@ -57,12 +57,15 @@ class Genome:
     @staticmethod
     def expand_links(parent_link, uniq_parent_name, flat_links, exp_links):
         children = [child for child in flat_links if child.parent_name == parent_link.name]
+        sibling_ind = 1
         for child in children:
             for recur in range(int(child.recur)):
+                sibling_ind += 1
                 c_copy = copy.copy(child)
                 c_copy.parent_name = uniq_parent_name
                 uniq_name = c_copy.name + str(len(exp_links))
                 c_copy.name = uniq_name
+                c_copy.sibling_ind = sibling_ind
                 exp_links.append(c_copy)
                 Genome.expand_links(child, uniq_name, flat_links, exp_links)
 
@@ -98,7 +101,7 @@ class Genome:
                             control_freq=gdict["control-freq"]
                             )
             links.append(link)
-            if link_ind != 0:# don't re-add the first link
+            if link_ind != 0: # don't re-add the first link
                 parent_names.append(link_name)
             link_ind += 1
         # now just fix the first link, so it links to nothing
@@ -144,6 +147,7 @@ class URDFLink:
         self.control_waveform = control_waveform
         self.control_amp = control_amp
         self.control_freq = control_freq
+        self.sibling_ind = 1
 
     def to_link_element(self, adom):
         #         <link name="base_link">
@@ -235,7 +239,9 @@ class URDFLink:
         limit_tag.setAttribute("velocity", "1")
         # <origin rpy="0 0 0" xyz="0 0.5 0"/>
         orig_tag = adom.createElement("origin")
-        rpy = str(self.joint_origin_rpy_1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)
+
+        rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
+        rpy = str(rpy1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)
         orig_tag.setAttribute("rpy", rpy)
         xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.joint_origin_xyz_3)
         orig_tag.setAttribute("xyz", xyz)
