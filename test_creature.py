@@ -44,4 +44,25 @@ class TestCreature(unittest.TestCase):
         with open('103.urdf', 'w') as f:
             f.write('<?xml version="1.0"?>' + "\n" + xml_str)
 
+    def test_motor(self):
+        m = creature.Motor(0.1, 0.5, 0.5)
+        self.assertIsNotNone(m)
+
+    def test_motor_val(self):
+        m = creature.Motor(0.1, 0.5, 0.5)
+        self.assertEqual(m.get_output(), 1)
+
+    def test_motor_val2(self):
+        m = creature.Motor(0.6, 0.5, 0.5)
+        m.get_output()
+        m.get_output()
+        self.assertGreater(m.get_output(), 0)
+
+    def test_c_mot(self):
+        c = creature.Creature(gene_count=4)
+        ls = c.get_expanded_links()
+        ms = c.get_motors()
+        self.assertEqual(len(ls) - 1, len(ms))
+
+
 unittest.main()
