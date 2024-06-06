@@ -42,17 +42,11 @@ class GenomeTest(unittest.TestCase):
         gene = genome.Genome.get_random_gene(20)
         self.assertGreater(gene[spec["link-length"]["ind"]], 0)
 
-    def test_get_gene_dict_exists(self):
-        self.assertIsNotNone(genome.Genome.get_gene_dict)
-
     def test_gene_to_gene_dict(self):
         spec = genome.Genome.get_gene_spec()
         gene = genome.Genome.get_random_gene(len(spec))
         gene_dict = genome.Genome.get_gene_dict(gene, spec)
         self.assertIn("link-recurrence", gene_dict)
-
-    def test_get_genome_dicts_exists(self):
-        self.assertIsNotNone(genome.Genome.get_genome_dicts)
 
     def test_genome_to_dict(self):
         spec = genome.Genome.get_gene_spec()
@@ -89,4 +83,23 @@ class GenomeTest(unittest.TestCase):
         genome.Genome.expand_links(links[0], links[0].name, links, exp_links)
         self.assertEqual(len(exp_links), 6)
 
+    def test_get_links(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)
+        links = genome.Genome.genome_to_links(genome_dicts)
+        self.assertEqual(len(links), 3)
+
+    def test_get_links_unique_names(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        gdicts = genome.Genome.get_genome_dicts(dna, spec)
+        links = genome.Genome.genome_to_links(gdicts)
+        # check that each link's name only appears once
+        for l in links:
+            print(l)
+            names = [link.name for link in links if link.name == l.name]
+            self.assertEqual(len(names), 1)
+
 unittest.main()
+
