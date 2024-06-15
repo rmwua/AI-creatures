@@ -3,6 +3,7 @@ from xml.dom.minidom import getDOMImplementation
 from enum import Enum
 import numpy as np
 
+
 class MotorType(Enum):
     PULSE = 1
     SINE = 2
@@ -20,6 +21,7 @@ class Motor:
 
     def get_output(self):
         self.phase = (self.phase + self.freq) % (np.pi * 2)
+        output = None
         if self.motor_type == MotorType.PULSE:
             if self.phase < np.pi:
                 output = 1
@@ -37,6 +39,10 @@ class Creature:
         self.flat_links = None
         self.exp_links = None
         self.motors = None
+        self.start_position = None
+        self.last_position = None
+        self.get_flat_links()
+        self.get_expanded_links()
 
     def get_flat_links(self):
         if self.flat_links is not None:
@@ -91,3 +97,18 @@ class Creature:
                 motors.append(m)
             self.motors = motors
         return self.motors
+
+    def update_position(self, pos):
+        if self.start_position is None:
+            self.start_position = pos
+        else:
+            self.last_position = pos
+
+    def get_distance_travelled(self):
+        if self.start_position is None or self.last_position is None:
+            return 0
+
+        p1 = np.asarray(self.start_position)
+        p2 = np.asarray(self.last_position)
+        dist = np.linalg.norm(p1 - p2)
+        return dist
