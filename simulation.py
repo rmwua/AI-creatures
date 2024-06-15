@@ -45,9 +45,10 @@ class Simulation:
                                     targetVelocity=m.get_output(),
                                     force=5,
                                     physicsClientId=self.physicsClientId)
+
     def eval_population(self, pop, iterations):
         for cr in pop.creatures:
-            self.run_creature(cr, 2400)
+            self.run_creature(cr, iterations)
 
 
 class ThreadedSim:
