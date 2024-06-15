@@ -44,6 +44,14 @@ class Creature:
         self.get_flat_links()
         self.get_expanded_links()
 
+    def update_dna(self, dna: list) -> None:
+        self.dna = dna
+        self.flat_links = None
+        self.exp_links = None
+        self.motors = None
+        self.start_position = None
+        self.last_position = None
+
     def get_flat_links(self):
         if self.flat_links is not None:
             return self.flat_links
@@ -112,3 +120,4 @@ class Creature:
         p2 = np.asarray(self.last_position)
         dist = np.linalg.norm(p1 - p2)
         return dist
+
