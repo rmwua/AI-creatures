@@ -1,4 +1,6 @@
 import copy
+import random
+
 import numpy as np
 
 
@@ -107,6 +109,53 @@ class Genome:
         # now just fix the first link, so it links to nothing
         links[0].parent_name = "None"
         return links
+
+    @staticmethod
+    def crossover(g1: list[float], g2: list[float]) -> list[float]:
+        x1 = random.randint(0, len(g1)-1)
+        x2 = random.randint(0, len(g2)-1)
+        if x1 == 0:
+            return g2
+        if x1 == len(g1):
+            return g1
+        g3 = np.concatenate((g1[x1:], g2[x2:]))
+        if len(g3) > len(g1):
+            g3 = g3[0:len(g1)]
+        return g3
+
+    @staticmethod
+    def point_mutate(genome, rate: float, amount):
+        new_genome = copy.copy(genome)
+        for gene in new_genome:
+            for i in range(len(gene)):
+                if random.random() < rate:
+                    gene[i] += amount
+                if gene[i] >= 1.0:
+                    gene[i] = 0.9999
+                if gene[i] < 0.0:
+                    gene[i] = 0.0
+        return new_genome
+
+    @staticmethod
+    def shrink_mutate(genome, rate):
+        if len(genome) == 1:
+            return copy.copy(genome)
+        if random.random() < rate:
+            ind = random.randint(0, len(genome)-1)
+            new_genome = np.delete(genome, ind, 0)
+            return new_genome
+        else:
+            return copy.copy(genome)
+
+    @staticmethod
+    def grow_mutate(genome, rate):
+        if random.random() < rate:
+            gene = Genome.get_random_gene(len(genome[0]))
+            new_genome = copy.copy(genome)
+            new_genome = np.append(new_genome, [gene], axis=0)
+            return new_genome
+        else:
+            return copy.copy(genome)
 
 
 class URDFLink:

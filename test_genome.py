@@ -97,10 +97,57 @@ class GenomeTest(unittest.TestCase):
         links = genome.Genome.genome_to_links(gdicts)
         # check that each link's name only appears once
         for l in links:
-            print(l)
+            # print(l)
             names = [link.name for link in links if link.name == l.name]
             self.assertEqual(len(names), 1)
 
+    def testCrossover(self):
+        g1 = [[1], [2], [3]]
+        g2 = [[4], [5], [6]]
+        g3 = []
+        for i in range(10):
+            g3 = genome.Genome.crossover(g1, g2)
+        self.assertGreater(len(g3), 0)
+
+    def test_point(self):
+        g1 = np.array([[1.0], [2.0], [3.0]])
+        g2 = genome.Genome.point_mutate(g1, rate=1, amount=0.25)
+        self.assertFalse(np.array_equal(g1, g2))
+
+    def test_point_range(self):
+        g1 = np.array([[1.0], [0.0], [1.0], [0.0]])
+        for i in range(100):
+            g2 = genome.Genome.point_mutate(g1, rate=1, amount=0.25)
+            self.assertLess(np.max(g2), 1.0)
+            self.assertGreaterEqual(np.min(g2), 0.0)
+
+    def test_shrink(self):
+        g1 = np.array([[1.0], [2.0]])
+        g2 = genome.Genome.shrink_mutate(g1, rate=1.0)
+        # should def. shrink as rate = 1
+        self.assertEqual(len(g2), 1)
+
+    def test_shrink2(self):
+        g1 = np.array([[1.0], [2.0]])
+        g2 = genome.Genome.shrink_mutate(g1, rate=0.0)
+        # should not shrink as rate = 0
+        self.assertEqual(len(g2), 2)
+
+    def test_shrink3(self):
+        g1 = np.array([[1.0]])
+        g2 = genome.Genome.shrink_mutate(g1, rate=1.0)
+        # should not shrink if already len 1
+        self.assertEqual(len(g2), 1)
+
+    def test_grow1(self):
+        g1 = np.array([[1.0], [2.0]])
+        g2 = genome.Genome.grow_mutate(g1, rate=1)
+        self.assertGreater(len(g2), len(g1))
+
+    def test_grow2(self):
+        g1 = np.array([[1.0], [2.0]])
+        g2 = genome.Genome.grow_mutate(g1, rate=0)
+        self.assertEqual(len(g2), len(g1))
 
 
 unittest.main()
